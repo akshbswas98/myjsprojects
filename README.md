@@ -1,3 +1,3 @@
 # myjsprojects
-Some Javascript project playground
-JS Clock app -[I'm an inline-style link](https://jssimpclock.netlify.app/)
+Some Javascript project playground:
+* JS Clock app -[Link](https://jssimpclock.netlify.app/)
