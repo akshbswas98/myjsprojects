@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>JS + CSS Clock</title>
 </head>
+
 <body>
 
-
+  <div class="wrapper">
     <div class="clock">
       <div class="clock-face">
         <div class="hand hour-hand"></div>
@@ -14,29 +16,40 @@
         <div class="hand second-hand"></div>
       </div>
     </div>
+  </div>
 
 
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@700&display=swap');
+
     html {
-      background: url('https://i.imgur.com/9WgJg0G.gif') no-repeat center center fixed;
+      background: url('./img/bg.gif') no-repeat center center fixed;
       background-size: cover;
       height: 100vh;
-    padding: 0;
-    margin: 0;
-
+      padding: 0;
+      margin: 0;
       font-family: 'helvetica neue';
       text-align: center;
-      font-size: 10px;
+
     }
 
     body {
+
       margin: 0;
       font-size: 2rem;
       display: flex;
       flex: 1;
       min-height: 100vh;
       align-items: center;
+      justify-content: center;
+      font-size: 6rem;
     }
+
+    .wrapper {
+      color: black;
+      font-family: 'Noto Sans JP', sans-serif;
+    }
+
 
     .clock {
       width: 30rem;
@@ -47,17 +60,18 @@
       position: relative;
       padding: 2rem;
       box-shadow:
-        0 0 0 4px rgba(0,0,0,0.1),
+        0 0 0 4px rgba(0, 0, 0, 0.1),
         inset 0 0 0 3px #EFEFEF,
         inset 0 0 10px black,
-        0 0 10px rgba(0,0,0,0.2);
+        0 0 10px rgba(0, 0, 0, 0.2);
     }
 
     .clock-face {
       position: relative;
       width: 100%;
       height: 100%;
-      transform: translateY(-3px); /* account for the height of the clock hands */
+      transform: translateY(-3px);
+      /* account for the height of the clock hands */
     }
 
     .hand {
@@ -71,29 +85,123 @@
       transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
       transform: rotate(90deg);
     }
-
   </style>
 
   <script>
-  const secondHand = document.querySelector('.second-hand');
-const minuteHand = document.querySelector('.min-hand');
-const hourHand = document.querySelector('.hour-hand');
-function setDate() {
-  const now = new Date();
 
-    const seconds = now.getSeconds();
-    const secondsDegrees = ((seconds / 60) * 360) + 90;
-    secondHand.style.transform = `rotate(${secondsDegrees}deg)`;
+    const clock = document.querySelector(".clock");
+    const wrapper = document.querySelector(".wrapper");
+    let now, seconds, mins, hour;
+    let digital = false; //variable to keep track of toggle
 
-    const mins = now.getMinutes();
-    const minsDegrees = ((mins / 60) * 360) + ((seconds/60)*6) + 90;
-    minuteHand.style.transform = `rotate(${minsDegrees}deg)`;
 
-    const hour = now.getHours();
-    const hourDegrees = ((hour / 12) * 360) + ((mins/60)*30) + 90;
-    hourHand.style.transform = `rotate(${hourDegrees}deg)`;
-}
-setInterval(setDate, 1000);
+
+    function gettime() {
+      now = new Date();
+      seconds = now.getSeconds();
+      mins = now.getMinutes();
+      hour = now.getHours();
+      if (digital) {
+        digitalclock();
+      }
+      else {
+        analogclock();
+      }
+    }
+
+    const analogclockhtml = `
+    <div class="clock">
+      <div class="clock-face">
+        <div class="hand hour-hand"></div>
+        <div class="hand min-hand"></div>
+        <div class="hand second-hand"></div>
+      </div>
+    </div>
+    `
+
+    function analogclock() {
+
+      const secondHand = document.querySelector('.second-hand');
+      const minuteHand = document.querySelector('.min-hand');
+      const hourHand = document .querySelector('.hour-hand');
+      console.log("here");
+      const secondsDegrees = ((seconds / 60) * 360) + 90;
+      secondHand.style.transform = `rotate(${secondsDegrees}deg)`;
+      const minsDegrees = ((mins / 60) * 360) + ((seconds / 60) * 6) + 90;
+      minuteHand.style.transform = `rotate(${minsDegrees}deg)`;
+      const hourDegrees = ((hour / 12) * 360) + ((mins / 60) * 30) + 90;
+      hourHand.style.transform = `rotate(${hourDegrees}deg)`;
+      
+    }
+
+    //function to toggle between analog and digital clock
+    wrapper.addEventListener("click", () => {
+      digital = !digital;
+      if (digital) {
+        wrapper.innerHTML = " ";
+      }
+      else {
+        wrapper.innerHTML = analogclockhtml;
+      }
+    })
+
+
+
+    function digitalclock() {
+
+
+      let formathours = amorpm(hour);
+      //convert  hours after 12 to before 12 as we will use format
+
+      hours = converthours(hour);
+
+      //add zero for single digits
+      hours = addzero(hours);
+      minutes = addzero(mins);
+
+      seconds = addzero(seconds);
+
+
+
+      wrapper.textContent = `${hours} : ${minutes} : ${seconds} ${formathours}`;
+
+    }
+
+    //AM or PM 
+    function amorpm(time) {
+      let format = 'AM';
+      if (time > 12)
+        format = 'PM';
+
+      return format;
+    }
+
+    //function to change 24 hour format to 12 hour format
+    function converthours(time) {
+      if (time > 12)
+        time -= 12;
+
+      if (time === 0) {
+        time = 12;
+      }
+      return time;
+    }
+
+
+
+    //function to add zero
+    function addzero(time) {
+      if (time < 10) {
+        time = "0" + time;
+      }
+      return time;
+    }
+
+    setInterval(() => {
+      gettime();
+
+    }, 1000)
   </script>
 </body>
+
 </html>
